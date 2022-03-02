@@ -18,7 +18,10 @@ type UserPost struct {
 type UserService struct{}
 
 func (this *UserService) Signup(user *UserPost) string {
-	return "valid_token"
+	if user.Password == user.ConfirmPassword {
+		return "valid_token"
+	}
+	return ""
 }
 
 func TestUserSignup(t *testing.T) {
@@ -37,6 +40,17 @@ func TestUserSignup(t *testing.T) {
 				ConfirmPassword: "valid_password",
 			},
 			want: "valid_token",
+		},
+		{
+			description: "should not return token when passwords don't match",
+			input: UserPost{
+				Name:            "Valid name",
+				Username:        "valid_username",
+				Email:           "valid_email@mail.com",
+				Password:        "valid_password",
+				ConfirmPassword: "invalid_password",
+			},
+			want: "",
 		},
 	}
 
